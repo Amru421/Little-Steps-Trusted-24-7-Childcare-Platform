@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="Find trusted, flexible childcare around the clock with Nestcare.">
+  <title>Nestcare — childcare that fits real life</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div class="announcement"><span class="pulse"></span> DEMO PREVIEW <span class="announcement-sep">·</span> Sample center details <span class="announcement-sep">·</span> Please don’t enter real children’s personal information</div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Nestcare home"><span class="brand-mark"><span></span><span></span><span></span><span></span></span><span>nestcare</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#centers">Find care</a>
+      <a href="#how">How it works</a>
+      <button class="nav-link" id="provider-link">For providers</button>
+    </nav>
+    <div class="account-area" id="account-area"><button class="button button-outline button-small" id="sign-in-button">Log in</button><button class="button button-dark button-small" id="join-button">Get started <span>↗</span></button></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> A little more peace of mind</div>
+        <h1>Good care.<br><span>On your</span> <em>schedule.</em></h1>
+        <p class="hero-description">Find a warm, trusted place for your little one — whether you need an hour, a whole day, or care through the night.</p>
+        <div class="hero-proof"><span class="proof-badge">♡</span><div><div class="proof-title">Care for every little stage</div><span class="proof-text">Infant · toddler · preschool</span></div></div>
+      </div>
+      <div class="hero-art" aria-label="Illustration of a parent and child in a garden">
+        <div class="sun-disc"></div><span class="art-sparkle sparkle-a">✳</span><span class="art-sparkle sparkle-b">✳</span><span class="art-leaf leaf-a"></span><span class="art-leaf leaf-b"></span>
+        <div class="art-image"><div class="art-hill"></div><div class="art-plant plant-left"><i></i><i></i><i></i><b></b></div><div class="art-plant plant-right"><i></i><i></i><i></i><b></b></div><div class="person adult"><div class="person-hair"></div><div class="person-head"></div><div class="person-body"></div><div class="person-arm"></div></div><div class="person child"><div class="person-hair"></div><div class="person-head"></div><div class="person-body"></div><div class="person-arm"></div></div><div class="art-flower flower-one">✿</div><div class="art-flower flower-two">✿</div></div>
+        <div class="floating-note"><span class="note-icon">✓</span><span><strong>Details that matter</strong><small>Centers, care plans & caregivers</small></span></div>
+        <div class="art-caption">A softer landing<br>for busy days <span>↗</span></div>
+      </div>
+      <div class="hero-bottom"><span>MADE FOR REAL-LIFE ROUTINES</span><div class="hero-bottom-rule"></div><span>INFANT · TODDLER · PRESCHOOL</span><span class="hero-scroll">SCROLL TO EXPLORE ↓</span></div>
+    </section>
+
+    <section class="search-section" id="centers">
+      <div class="section-top"><div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR NEXT GOOD FIND</div><h2>Care that <em>feels right.</em></h2></div><span class="results-count" id="results-count">Finding lovely places near you</span></div>
+      <form class="search-panel" id="search-form">
+        <label class="search-field"><span class="field-icon">⌖</span><span class="field-wrap"><small>WHERE</small><input type="search" id="city-filter" placeholder="City or neighborhood" value="Bengaluru"></span></label>
+        <label class="search-field"><span class="field-icon">♡</span><span class="field-wrap"><small>AGE GROUP</small><select id="age-filter"><option value="">All little ones</option><option>Infant</option><option>Toddler</option><option>Preschool</option></select></span></label>
+        <label class="search-field"><span class="field-icon">◷</span><span class="field-wrap"><small>WHEN YOU NEED CARE</small><select id="hours-filter"><option value="">Any schedule</option><option value="24">Open 24 hours</option></select></span></label>
+        <button class="button button-green search-button" type="submit">Find care <span>↗</span></button>
+      </form>
+      <div class="cards-grid" id="center-list"><div class="loading-card">Finding wonderful care nearby…</div></div>
+    </section>
+
+    <section class="how-section" id="how">
+      <div class="how-heading"><div class="eyebrow"><span class="eyebrow-line"></span> EASY AS 1, 2, THREE</div><h2>More time for<br><em>the good stuff.</em></h2><p>Finding the right care shouldn't be another full-time job.</p></div>
+      <div class="steps"><article class="step"><span class="step-number">01</span><span class="step-icon">⌕</span><h3>Find your fit</h3><p>Browse real centers, compare transparent plans, and find the right kind of care for your family.</p><span class="step-arrow">↗</span></article><article class="step"><span class="step-number">02</span><span class="step-icon">♡</span><h3>Get to know them</h3><p>Explore caregiver profiles, center details, age groups, and the safety standards that matter to you.</p><span class="step-arrow">↗</span></article><article class="step"><span class="step-number">03</span><span class="step-icon">✳</span><h3>Make it official</h3><p>Request a flexible booking or monthly plan. Your center confirms availability directly.</p><span class="step-arrow">↗</span></article></div>
+    </section>
+
+    <section class="trust-band"><div class="trust-mark">✳</div><div><div class="eyebrow">A THOUGHTFUL PLACE TO START</div><h2>Trust is in the <em>details.</em></h2></div><p>Center verification, caregiver introductions, and transparent safety information — so families can decide with confidence.</p><a href="#centers" class="text-link">Explore verified centers <span>↗</span></a></section>
+
+    <section class="dashboard-section hidden" id="dashboard"><div class="section-top"><div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR NESTCARE</div><h2 id="dashboard-title">Your dashboard</h2></div><button class="button button-outline button-small" id="dashboard-refresh">Refresh ↻</button></div><div id="dashboard-content"></div></section>
+  </main>
+
+  <footer class="footer"><div class="footer-brand"><a class="brand" href="/"><span class="brand-mark"><span></span><span></span><span></span><span></span></span><span>nestcare</span></a><p>A little more peace of mind<br>for the beautiful chaos of family life.</p></div><div class="footer-links"><a href="#centers">Find care</a><a href="#how">How it works</a><button id="footer-provider">Become a provider</button></div><div class="footer-end"><span>Carefully built for little people & big lives.</span><span>© 2026 Nestcare</span></div></footer>
+  <div id="modal-root"></div>
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+</body>
+</html>
