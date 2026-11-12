@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+nestcare.sqlite3
+nestcare.sqlite3-shm
+nestcare.sqlite3-wal
+.env
