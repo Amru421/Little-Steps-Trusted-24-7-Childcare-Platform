@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: little-steps-childcare
+    runtime: python
+    plan: starter
+    buildCommand: python -m py_compile server.py
+    startCommand: python server.py
+    healthCheckPath: /api/health
+    disk:
+      name: childcare-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NESTCARE_HOST
+        value: 0.0.0.0
+      - key: NESTCARE_DB
+        value: /var/data/nestcare.sqlite3
+      - key: NESTCARE_DEMO_DATA
+        value: "false"
+      - key: NESTCARE_SECURE_COOKIES
+        value: "true"
+      - key: NESTCARE_ADMIN_EMAIL
+        sync: false
+      - key: NESTCARE_ADMIN_PASSWORD
+        sync: false
