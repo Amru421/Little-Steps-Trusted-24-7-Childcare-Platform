@@ -33,7 +33,10 @@ A public deployment needs production-grade hosting and operational controls, inc
 - Live capacity checks before hourly, daily, or monthly care requests; capacity is rechecked when a request is submitted. In-app status notifications are included.
 - Provider applications held for approval; provider dashboards for schedules, capacity, pricing, caregiver profiles, and request decisions.
 - Admin review of provider and center applications, booking/subscription overview, and family concern resolution.
+- A transcript-led app tour and a public feedback form whose submissions are visible only to administrators.
 - Role-gated API routes, parameterized SQL, password hashing, HTTP-only same-site sessions, and a local persistent SQLite database.
+
+The app tour is available at `/explainer.html`, and feedback can be submitted at `/feedback.html`. Feedback is stored in the app database for administrator review; the form asks visitors not to submit children’s personal or health information.
 
 ## Verification
 

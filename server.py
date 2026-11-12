@@ -135,6 +135,13 @@ def initialize():
                 status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','resolved')),
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS app_feedback (
+                id INTEGER PRIMARY KEY,
+                rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),
+                category TEXT NOT NULL CHECK(category IN ('search','booking','provider','accessibility','other')),
+                message TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE INDEX IF NOT EXISTS booking_center_dates ON bookings(center_id, date, end_date, status);
             CREATE INDEX IF NOT EXISTS booking_parent ON bookings(parent_id, created_at);
             CREATE INDEX IF NOT EXISTS subscription_parent ON subscriptions(parent_id, created_at);
@@ -347,14 +354,46 @@ class Handler(BaseHTTPRequestHandler):
             ".css": "text/css; charset=utf-8",
             ".js": "text/javascript; charset=utf-8",
             ".svg": "image/svg+xml",
+            ".webm": "video/webm",
+            ".vtt": "text/vtt; charset=utf-8",
         }.get(requested.suffix.lower(), "application/octet-stream")
         body = requested.read_bytes()
-        self.send_response(200)
+        status = 200
+        range_header = self.headers.get("Range")
+        if range_header:
+            try:
+                unit, bounds = range_header.strip().split("=", 1)
+                if unit != "bytes" or "," in bounds:
+                    raise ValueError
+                first, last = bounds.split("-", 1)
+                if first:
+                    start = int(first)
+                    end = min(int(last), len(body) - 1) if last else len(body) - 1
+                else:
+                    suffix_length = int(last)
+                    if suffix_length <= 0:
+                        raise ValueError
+                    start = max(0, len(body) - suffix_length)
+                    end = len(body) - 1
+                if start < 0 or start >= len(body) or end < start:
+                    raise ValueError
+            except ValueError:
+                self.send_response(416)
+                self.send_header("Content-Range", f"bytes */{len(body)}")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            body = body[start:end + 1]
+            status = 206
+        self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Accept-Ranges", "bytes")
+        if status == 206:
+            self.send_header("Content-Range", f"bytes {start}-{end}/{requested.stat().st_size}")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
-        self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
+        self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
         self.end_headers()
         self.wfile.write(body)
 
@@ -507,9 +546,13 @@ class Handler(BaseHTTPRequestHandler):
                    JOIN centers c ON c.id=b.center_id JOIN users u ON u.id=d.reporter_id
                    ORDER BY d.status ASC,d.created_at DESC"""
             ).fetchall()
+            feedback = db.execute(
+                "SELECT id,rating,category,message,created_at FROM app_feedback ORDER BY created_at DESC LIMIT 100"
+            ).fetchall()
             return {"stats": stats, "users": [dict(x) for x in users],
                     "centers": [self.center_json(x) | {"provider_name": x["provider_name"]} for x in centers],
-                    "disputes": [dict(x) for x in disputes]}, 200
+                    "disputes": [dict(x) for x in disputes],
+                    "feedback": [dict(x) for x in feedback]}, 200
         raise APIError(404, "Not found.")
 
     @staticmethod
@@ -524,6 +567,19 @@ class Handler(BaseHTTPRequestHandler):
         }
 
     def route_post(self, db, path, body):
+        if path == "/api/feedback":
+            rating = self.number(body, "rating", 1, 5)
+            category = self.text(body, "category", 20)
+            message = body.get("message", "")
+            if category not in ("search", "booking", "provider", "accessibility", "other"):
+                raise APIError(400, "Choose a feedback topic.")
+            if not isinstance(message, str) or not 10 <= len(message.strip()) <= 1200:
+                raise APIError(400, "Feedback must be between 10 and 1,200 characters.")
+            cursor = db.execute(
+                "INSERT INTO app_feedback(rating,category,message) VALUES(?,?,?)",
+                (rating, category, message.strip()),
+            )
+            return {"message": "Thank you for helping us improve Nestcare.", "feedbackId": cursor.lastrowid}, 201, None
         if path == "/api/register":
             name, email = self.text(body, "name", 100), self.text(body, "email", 254).lower()
             password = body.get("password", "")

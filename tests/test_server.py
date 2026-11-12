@@ -230,6 +230,36 @@ class NestcareAPITests(unittest.TestCase):
         response = self.request_json(self.parent, "GET", "/api/admin/overview")
         self.assertEqual(response["_status"], 403)
 
+    def test_public_feedback_is_validated_and_visible_only_to_admins(self):
+        response = self.request_json(
+            self.parent, "POST", "/api/feedback",
+            {"rating": 5, "category": "search", "message": "The center search was clear and easy to use."},
+        )
+        self.assertIn("feedbackId", response)
+        overview = self.request_json(self.admin, "GET", "/api/admin/overview")
+        feedback = next(item for item in overview["feedback"] if item["id"] == response["feedbackId"])
+        self.assertEqual(feedback["rating"], 5)
+        self.assertEqual(feedback["category"], "search")
+        self.assertEqual(feedback["message"], "The center search was clear and easy to use.")
+
+        invalid = self.request_json(
+            self.parent, "POST", "/api/feedback",
+            {"rating": 6, "category": "search", "message": "This rating should be rejected."},
+        )
+        self.assertEqual(invalid["_status"], 400)
+        invalid_topic = self.request_json(
+            self.parent, "POST", "/api/feedback",
+            {"rating": 4, "category": "unknown", "message": "This topic should be rejected."},
+        )
+        self.assertEqual(invalid_topic["_status"], 400)
+
+    def test_explainer_page_works_without_a_video_asset(self):
+        with self.parent.open(self.base_url + "/explainer.html", timeout=5) as response:
+            page = response.read().decode("utf-8")
+        self.assertIn("Explore Nestcare.", page)
+        self.assertIn("What you’ll see", page)
+        self.assertNotIn(".webm", page)
+
     def test_family_concern_is_visible_and_resolvable_by_admin(self):
         booking = self.booking_request()
         report = self.request_json(
